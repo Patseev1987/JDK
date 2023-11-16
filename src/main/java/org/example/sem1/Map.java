@@ -12,8 +12,8 @@ public class Map extends JPanel {
 
     private int gameOverType;
     private static final int STATE_DRAW = 0;
-    private static final int STATE_WIN_HUMAN =1;
-    private static final int STATE_WIN_AI =2;
+    private static final int STATE_WIN_HUMAN = 1;
+    private static final int STATE_WIN_AI = 2;
 
 
     private static final String MSG_WIN_HUMAN = " Human win";
@@ -23,6 +23,9 @@ public class Map extends JPanel {
     private int panelHeight;
     private int cellHeight;
     private int cellWidth;
+
+    private boolean isGameOver;
+    private boolean isInitialized;
 
 
     private static final Random RANDOM = new Random();
@@ -35,6 +38,7 @@ public class Map extends JPanel {
     private char[][] field;
 
     Map() {
+        isInitialized = false;
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -96,31 +100,37 @@ public class Map extends JPanel {
 
 
     private void update(MouseEvent e) {
+        if (isGameOver || !isInitialized) return;
         int cellX = e.getX() / cellWidth;
         int cellY = e.getY() / cellHeight;
         if (!isValidCell(cellX, cellY) || !isEmptyCell(cellX, cellY)) return;
         field[cellX][cellY] = HUMAN_DOT;
         repaint();
-
-        if(checkEndGame(AI_DOT,STATE_WIN_AI)) return;
+        if (checkEndGame(HUMAN_DOT, STATE_WIN_HUMAN)) return;
+        aiTurn();
+        repaint();
+        if (checkEndGame(AI_DOT, STATE_WIN_AI)) return;
     }
 
-    private boolean checkEndGame(int dot, int gameOverType){
-        if(checkWin((char) dot)){
+    private boolean checkEndGame(int dot, int gameOverType) {
+        if (checkWin((char) dot)) {
             this.gameOverType = gameOverType;
             repaint();
+            isGameOver = true;
             return true;
         }
-        if (isMapFull()){
+        if (isMapFull()) {
             this.gameOverType = STATE_DRAW;
             repaint();
+            isGameOver = true;
             return true;
         }
         return false;
     }
 
     void startNewGame(int mode, int fSx, int fSy, int wLength) {
-        System.out.println(mode + fSx + fSy + wLength);
+        isGameOver = false;
+        isInitialized = true;
         repaint();
         initMap();
     }
@@ -132,6 +142,7 @@ public class Map extends JPanel {
     }
 
     private void render(Graphics g) {
+        if(!isInitialized) return;
         panelHeight = getHeight();
         panelWidth = getWidth();
         cellHeight = panelHeight / 3;
@@ -147,27 +158,49 @@ public class Map extends JPanel {
             g.drawLine(0, y, panelWidth, y);
         }
 
-        for (int i = 0; i < fieldSizeY; i++) {
-            for (int j = 0; j < fieldSizeX; j++) {
-                if (field[i][j] == EMPTY_DOT) continue;
+        for (int y = 0; y < fieldSizeY; y++) {
+            for (int x = 0; x < fieldSizeX; x++) {
+                if (field[x][y] == EMPTY_DOT) continue;
 
-                if (field[i][j] == HUMAN_DOT) {
+                if (field[x][y] == HUMAN_DOT) {
                     g.setColor(Color.BLUE);
-                    g.fillOval(j * cellWidth + DOT_PADDING,
-                            i * cellHeight + DOT_PADDING,
+                    g.fillOval(x * cellWidth + DOT_PADDING,
+                            y * cellHeight + DOT_PADDING,
                             cellWidth - DOT_PADDING * 2,
                             cellHeight - DOT_PADDING * 2);
-                } else if (field[i][j] == AI_DOT) {
+                } else if (field[x][y] == AI_DOT) {
                     g.setColor(new Color(0xff0000));
-                    g.fillOval(j * cellWidth + DOT_PADDING,
-                            i * cellHeight + DOT_PADDING,
+                    g.fillOval(x * cellWidth + DOT_PADDING,
+                            y * cellHeight + DOT_PADDING,
                             cellWidth - DOT_PADDING * 2,
                             cellHeight - DOT_PADDING * 2);
                 } else {
-                    throw new RuntimeException("Unexpected value " + field[i][j] + " in cell: x=" + j + " y=" + i);
+                    throw new RuntimeException("Unexpected value " + field[x][y] + " in cell: x=" + x + " y=" + y);
                 }
             }
         }
+        if (isGameOver) showMessageGameOver(g) ;
 
+
+    }
+
+    private void showMessageGameOver( Graphics g){
+        g.setColor((Color.DARK_GRAY));
+        g.fillRect(0, 200, getWidth(), 70);
+        g.setColor(Color.YELLOW);
+        g.setFont(new Font("Times new roman", Font.BOLD, 48));
+        switch (gameOverType) {
+            case STATE_DRAW:
+                g.drawString(MSG_DRAW, 180, getHeight() / 2);
+                break;
+            case STATE_WIN_AI:
+                g.drawString(MSG_WIN_AI,20,getHeight()/2);
+                break;
+            case STATE_WIN_HUMAN:
+                g.drawString(MSG_WIN_HUMAN,70,getHeight()/2);
+                break;
+            default:
+                throw new RuntimeException("Unexpected gameOver state: "+ gameOverType);
+        }
     }
 }
