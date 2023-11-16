@@ -72,7 +72,7 @@ public class Map extends JPanel {
             x = RANDOM.nextInt(fieldSizeX);
             y = RANDOM.nextInt(fieldSizeY);
         } while (!isEmptyCell(x, y));
-        field[y][x] = AI_DOT;
+        field[x][y] = AI_DOT;
     }
 
     private boolean checkWin(char c) {
