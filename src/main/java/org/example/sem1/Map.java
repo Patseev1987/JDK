@@ -82,10 +82,59 @@ public class Map extends JPanel {
 
         if (field[0][0] == c && field[1][0] == c && field[2][0] == c) return true;
         if (field[0][1] == c && field[1][1] == c && field[2][1] == c) return true;
-        if (field[0][2] == c && field[1][1] == c && field[2][2] == c) return true;
+        if (field[0][2] == c && field[1][2] == c && field[2][2] == c) return true;
 
         if (field[0][0] == c && field[1][1] == c && field[2][2] == c) return true;
         if (field[0][2] == c && field[1][1] == c && field[2][0] == c) return true;
+        return false;
+    }
+
+
+    private boolean checkWinNew(char c, int xSize, int ySize) {
+        boolean isWin = false;
+        for (int i = 0; i < ySize; i++) {
+            for (int j = 0; j < xSize ; j++) {
+                if (field[j][i] == c) {
+                    isWin = true;
+                } else {
+                    isWin = false;
+                    break;
+                }
+            }
+            if (isWin) return true;
+        }
+        for (int i = 0; i < xSize; i++) {
+            for (int j = 0; j < ySize ; j++) {
+                if (field[i][j] == c) {
+                    isWin = true;
+                } else {
+                    isWin = false;
+                    break;
+                }
+            }
+            if (isWin) return true;
+        }
+
+        for (int i = 0; i < ySize; i++) {
+            if (field[i][i] == c) {
+                isWin = true;
+            } else {
+               isWin = false;
+                break;
+            }
+        }
+            if (isWin) return true;
+
+        for (int i = ySize-1; i >= 0; i--) {
+            if (field[i][ySize-1-i] == c ) {
+                isWin = true;
+            } else {
+                isWin =false;
+                break;
+            }
+        }
+            if (isWin) return true;
+
         return false;
     }
 
@@ -113,7 +162,7 @@ public class Map extends JPanel {
     }
 
     private boolean checkEndGame(int dot, int gameOverType) {
-        if (checkWin((char) dot)) {
+        if (checkWinNew((char) dot,3,3)) {
             this.gameOverType = gameOverType;
             repaint();
             isGameOver = true;
@@ -142,7 +191,7 @@ public class Map extends JPanel {
     }
 
     private void render(Graphics g) {
-        if(!isInitialized) return;
+        if (!isInitialized) return;
         panelHeight = getHeight();
         panelWidth = getWidth();
         cellHeight = panelHeight / 3;
@@ -179,12 +228,12 @@ public class Map extends JPanel {
                 }
             }
         }
-        if (isGameOver) showMessageGameOver(g) ;
+        if (isGameOver) showMessageGameOver(g);
 
 
     }
 
-    private void showMessageGameOver( Graphics g){
+    private void showMessageGameOver(Graphics g) {
         g.setColor((Color.DARK_GRAY));
         g.fillRect(0, 200, getWidth(), 70);
         g.setColor(Color.YELLOW);
@@ -194,13 +243,13 @@ public class Map extends JPanel {
                 g.drawString(MSG_DRAW, 180, getHeight() / 2);
                 break;
             case STATE_WIN_AI:
-                g.drawString(MSG_WIN_AI,20,getHeight()/2);
+                g.drawString(MSG_WIN_AI, 20, getHeight() / 2);
                 break;
             case STATE_WIN_HUMAN:
-                g.drawString(MSG_WIN_HUMAN,70,getHeight()/2);
+                g.drawString(MSG_WIN_HUMAN, 70, getHeight() / 2);
                 break;
             default:
-                throw new RuntimeException("Unexpected gameOver state: "+ gameOverType);
+                throw new RuntimeException("Unexpected gameOver state: " + gameOverType);
         }
     }
 }
