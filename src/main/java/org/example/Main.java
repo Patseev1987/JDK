@@ -1,65 +1,32 @@
 package org.example;
 
-import org.example.sem3.ArraysComparator;
-import org.example.sem3.Calculator;
-import org.example.sem3.Pair;
-import org.example.sem3.Task2;
+
+import org.example.sem4.Employee;
+import org.example.sem4.EmployeesDictionary;
+
+import java.time.LocalDate;
+import java.time.Period;
 
 public class Main {
     public static void main(String[] args) {
-//        Task2<Integer> numbers = new Task2<>();
-//
-//        numbers.add(1);
-//        numbers.add(2);
-//        numbers.add(3);
-//        numbers.add(4);
-//        numbers.add(5);
-//        numbers.add(6);
-//
-//        numbers.remove(2);
-//
-//        System.out.println(numbers.getItemsSize());
-//        System.out.println(numbers);
-//        System.out.println("****************************");
-//
-//        Task2.BogdanIterator iterator = numbers.getIterator();
-//
-//
-//        while (iterator.hasNext()){
-//            System.out.println(iterator.next());
-//        }
-//
-//        System.out.println(Calculator.sum(10,10f));
-//        System.out.println(Calculator.divide(10,10.0));
-//        System.out.println(Calculator.multiply(10L,10));
-//        System.out.println(Calculator.subtract(10L,10f));
-//        System.out.println(Calculator.divide(10L,0));
+        EmployeesDictionary employees = EmployeesDictionary.getInstance();
+        employees.addEmployee(new Employee(1,"3333","John",LocalDate.of(2012,12,12)));
+        employees.addEmployee(new Employee(2,"3667","Franc",LocalDate.of(2020,2,1)));
+        employees.addEmployee(new Employee(3,"8899","Coule",LocalDate.of(2018,3,17)));
+        employees.addEmployee(new Employee(4,"000000","Bob",LocalDate.of(2021,5,26)));
+        employees.addEmployee(new Employee(5,"776859403","Thomas",LocalDate.of(2009,4,7)));
+        employees.showAllEmployees();
 
-        Pair<Integer,String> pair = new Pair<>(10,"ten");
-        System.out.println(pair);
+        EmployeesDictionary emp2 = EmployeesDictionary.getInstance();
+        emp2.showAllEmployees();
+
+        employees.searchPhoneNumberByName("John");
+        emp2.showResultsByExperienceSearch();
+
+        employees.showEmployeeByPersonalNumber(3);
 
 
-        Object first = new Object();
-        Object second = new Object();
-        Pair<Object,Object> pair2 = new Pair<>(first,second);
-        System.out.println(pair2);
-
-
-
-        String[] strs = {"a","b","c"};
-        String[] strs2 = {"a","b","c"};
-        String[] strs3 = {"a","b","c","d"};
-        Integer[] ints = {1,2,3,4};
-        Integer[] ints2 = {1,2,3,4,5};
-        Integer[] ints3 = {1,2,3,4};
-
-        System.out.println(ArraysComparator.compareArrays(strs,strs2));
-        System.out.println(ArraysComparator.compareArrays(strs,strs3));
-        System.out.println(ArraysComparator.compareArrays(ints,ints3));
-        System.out.println(ArraysComparator.compareArrays(ints3,ints2));
-        System.out.println(ArraysComparator.compareArrays(strs,ints));
-
-
+        emp2.showEmployeeByPersonalNumber(100);
 
 
     }
