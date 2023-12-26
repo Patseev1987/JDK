@@ -7,7 +7,7 @@ import java.util.Random;
 public class ParadoxMonroGame {
     private final int numberOfGames;
     private final boolean changeDoor;
-    private final Map<Integer,String > results = new HashMap<>();
+    private final Map<Integer, String> results = new HashMap<>();
     private final Random random = new Random();
     private final String WINNER = "Winner";
     private final String LOSER = "Loser";
@@ -17,67 +17,54 @@ public class ParadoxMonroGame {
         this.changeDoor = changeDoor;
     }
 
-    private void play(){
+    private void play() {
         for (int i = 0; i < numberOfGames; i++) {
             int winnerDoor = random.nextInt(1, 4);
             int gamerChoice = random.nextInt(1, 4);
-            int presenterChoice = getPresenterChoice(winnerDoor, gamerChoice);
+            int presenterChoice = getNewDoor(winnerDoor, gamerChoice);
             if (changeDoor) {
-                gamerChoice = getNewGamerChoice(gamerChoice, presenterChoice);
+                gamerChoice = getNewDoor(gamerChoice, presenterChoice);
             }
-            if (winnerDoor == gamerChoice){
-                results.put(i,WINNER);
-            }else {
-                results.put(i,LOSER);
+            if (winnerDoor == gamerChoice) {
+                results.put(i, WINNER);
+            } else {
+                results.put(i, LOSER);
             }
         }
     }
 
 
-    public void getInfo(){
+    public void getInfo() {
         play();
         int winnerCounter = 0;
         int loserCounter = 0;
-        for (var entry: results.entrySet()){
-            if (entry.getValue().equals(WINNER)){
+        for (var entry : results.entrySet()) {
+            if (entry.getValue().equals(WINNER)) {
                 winnerCounter++;
-            }else{
+            } else {
                 loserCounter++;
             }
         }
-
-        if (changeDoor){
-            System.out.printf("Gamer played %d times with door change.\nGamer won %d times (%.0f%%).\nGamer lost %d times (%.0f%%).\n"
-                    ,numberOfGames, winnerCounter,((winnerCounter/(double) numberOfGames)*100)
-                    ,loserCounter,((loserCounter/(double) numberOfGames)*100));
-        }else {
-            System.out.printf("Gamer played %d times without door change.\nGamer won %d times (%.0f%%).\nGamer lost %d times (%.0f%%).\n"
-                    ,numberOfGames, winnerCounter,((winnerCounter/(double) numberOfGames)*100)
-                    ,loserCounter,((loserCounter/(double) numberOfGames)*100));
-        }
+        getAnswer(numberOfGames, winnerCounter, loserCounter, changeDoor);
     }
 
-    private int getNewGamerChoice(int gamerChoice, int presenterChoice) {
-        int newGamerChoice = 1;
+    public void getAnswer(int numberOfGames, int winnerCounter, int loserCounter, boolean changeDoor) {
+        String preposition = (changeDoor) ? "with" : "without";
+        System.out.printf("Gamer played %d times %s door changing.\nGamer won %d times (%.0f%%).\nGamer lost %d times (%.0f%%).\n"
+                , numberOfGames, preposition, winnerCounter, ((winnerCounter / (double) numberOfGames) * 100)
+                , loserCounter, ((loserCounter / (double) numberOfGames) * 100));
+    }
+
+    public int getNewDoor(int changedDoor, int openDoor) {
+        int newDoor = 1;
         for (int i = 0; i < 3; i++) {
-            if (newGamerChoice != presenterChoice && newGamerChoice!= gamerChoice){
+            if (newDoor != changedDoor && newDoor != openDoor) {
                 break;
-            }else {
-                newGamerChoice++;
+            } else {
+                newDoor++;
             }
         }
-        return newGamerChoice;
+        return newDoor;
     }
 
-    public int getPresenterChoice(int winnerDoor, int gamerChoice) {
-        int presenterChoice = 1;
-        for (int i = 0; i < 3; i++) {
-            if (presenterChoice!=winnerDoor && presenterChoice!=gamerChoice){
-                break;
-            }else {
-                presenterChoice++;
-            }
-        }
-        return presenterChoice;
-    }
 }
